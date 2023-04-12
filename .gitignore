@@ -1,1 +1,2 @@
 /backendService/venv/*
+/frontendApp/node_modules/*
