@@ -42,6 +42,12 @@ $ . venv/bin/activate
 $ pip3 install Flask
 ```
 
+- To install websocket flask
+> [Flask Socket io](https://flask-socketio.readthedocs.io/en/latest/)
+```python
+$ pip3 install flask_socketio
+```
+
 #### Installing Apache Kafka
 
 > Notes from the web:
@@ -77,4 +83,17 @@ $ bin/kafka-topics.sh --describe --topic meetup-rsvp --bootstrap-server localhos
 2. <strong>Kafka client for Python</strong>
 ```python
 pip install kafka-python
+```
+
+### Frontend
+
+> [Library for socket implementation - socket.io client](https://socket.io/docs/v4/client-initialization/)
+
+- Install socket client
+```bash
+npm i socket.io-client
+```
+- Install ImportMaps, as socket client import was not working
+```bash
+npm i --save-dev @web/dev-server-import-maps
 ```
