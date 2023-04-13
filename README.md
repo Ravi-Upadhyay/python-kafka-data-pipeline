@@ -6,6 +6,8 @@ ___
 
 - App structure
 - Instructions
+- Reference from Web
+- Todo List
 ___
 
 ## Folder Structurre
@@ -85,6 +87,13 @@ $ bin/kafka-topics.sh --describe --topic meetup-rsvp --bootstrap-server localhos
 pip install kafka-python
 ```
 
+3. Additional dependencies
+
+> [Flask Expects JSON](https://pypi.org/project/flask-expects-json/) Decorator for REST endpoints in flask. Validate JSON request data.
+```python
+$ pip3 install flask-expects-json
+```
+
 ### Frontend
 
 > [Library for socket implementation - socket.io client](https://socket.io/docs/v4/client-initialization/)
@@ -97,3 +106,12 @@ npm i socket.io-client
 ```bash
 npm i --save-dev @web/dev-server-import-maps
 ```
+___
+
+## Reference From Web
+
+___
+
+## Todo List
+
+- Make backend service a single page application. [Flask Single Page App](https://flask.palletsprojects.com/en/2.2.x/patterns/singlepageapplications/)

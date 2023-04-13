@@ -1,3 +1,9 @@
+"""
+Module: Main/Root Application
+This is a single page application
+Communicates with the front end over web socket
+"""
+
 from flask import Flask
 from flask_socketio import SocketIO
 
