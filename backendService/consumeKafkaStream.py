@@ -1,5 +1,5 @@
 from time import sleep
-from kafka import KafkaProducer
+from kafka import KafkaProducer, KafkaConsumer
 import json
 
 DEFAULT_ENCODING = "utf-8"
@@ -18,35 +18,33 @@ KAFKA_TOPIC_INCOMING = "meetup-rsvp"
 producer = KafkaProducer(bootstrap_servers=[KAFKA_HOST], value_serializer=lambda m: json.dumps(m).encode(DEFAULT_ENCODING))
 
 # Set up Kafka consumer
-# consumer = KafkaConsumer(KAFKA_TOPIC_INCOMING, bootstrap_servers=[KAFKA_HOST], auto_offset_reset='earliest')
+consumer = KafkaConsumer(KAFKA_TOPIC_INCOMING, bootstrap_servers=[KAFKA_HOST], auto_offset_reset='earliest')
 
 # for message in consumer:
 #     data = message.value.decode('utf-8')
 #     print(data)
 
-# def consumeKafka():
-#     for message in consumer:
-#         data = message.value.decode(DEFAULT_ENCODING)
-#         print('Reading from kafka pipeline: ', data)
 
 # TODO: Cleaning based on anamolies found
 def sanitizeInputBeforeEventCreation(d):
     return d
 
-def produceKafkaEvent(l):
+def consumeKafka():
+    for message in consumer:
+        data = message.value.decode(DEFAULT_ENCODING)
+        print('Reading from kafka pipeline: ', data)
+
+def processLine(l):
     sanitizedInput = sanitizeInputBeforeEventCreation(l)
     print('Reading from file: ', sanitizedInput)
+
     producer.send(KAFKA_TOPIC_INCOMING, {'rsvp': sanitizedInput})
+    sleep(SLEEP_TIME_BEFORE_READ_NEXT_LINE)
 
-def readFileLineByLineAsStream(file, defEncoding, simTime):
-    with open(file, mode="rt", encoding=defEncoding) as openfileobject:
-        for line in openfileobject:
-            produceKafkaEvent(line)
-            sleep(simTime)
 
-# with open(FILE_LOCATION, mode="rt", encoding=DEFAULT_ENCODING) as openfileobject:
-#     for line in openfileobject:
-#         processLine(line)
+with open(FILE_LOCATION, mode="rt", encoding=DEFAULT_ENCODING) as openfileobject:
+    for line in openfileobject:
+        processLine(line)
     
     # Wait for any outstanding messages to be delivered and delivery reports received
     # producer.flush()
@@ -57,7 +55,4 @@ def readFileLineByLineAsStream(file, defEncoding, simTime):
 # def closeFileStream(f):
 #     close(f)
 
-# consumeKafka()
-
-if __name__ == '__main__':
-    readFileLineByLineAsStream(FILE_LOCATION, DEFAULT_ENCODING, SLEEP_TIME_BEFORE_READ_NEXT_LINE)
+consumeKafka()
