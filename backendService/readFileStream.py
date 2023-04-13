@@ -18,22 +18,26 @@ producer = KafkaProducer(bootstrap_servers=['localhost:9092'], value_serializer=
 # Set up Kafka consumer
 consumer = KafkaConsumer(KAFKA_TOPIC_INCOMING, bootstrap_servers=['localhost:9092'], auto_offset_reset='earliest')
 
-for message in consumer:
-    data = message.value.decode('utf-8')
-    print(data)
+# for message in consumer:
+#     data = message.value.decode('utf-8')
+#     print(data)
 
 
 # TODO: Cleaning based on anamolies found
 def sanitizeInputBeforeEventCreation(d):
     return d
 
+def consumeKafka():
+    for message in consumer:
+        data = message.value.decode('utf-8')
+        print('Reading from kafka pipeline: ', data)
 
 def processLine(l):
     sanitizedInput = sanitizeInputBeforeEventCreation(l)
-    # print(sanitizedInput)
+    print('Reading from file: ', sanitizedInput)
 
     producer.send(KAFKA_TOPIC_INCOMING, {'rsvp': sanitizedInput})
-    sleep(SLEEP_TIME_BEFORE_READ_NEXT_LINE)
+    # sleep(SLEEP_TIME_BEFORE_READ_NEXT_LINE)
 
 
 with open(FILE_LOCATION, mode="rt", encoding=DEFAULT_ENCODING) as openfileobject:
@@ -41,11 +45,12 @@ with open(FILE_LOCATION, mode="rt", encoding=DEFAULT_ENCODING) as openfileobject
         processLine(line)
     
     # Wait for any outstanding messages to be delivered and delivery reports received
-    producer.flush()
+    # producer.flush()
 
     # Close the producer connection
-    producer.close()
+    # producer.close()
 
 # def closeFileStream(f):
 #     close(f)
 
+consumeKafka()
