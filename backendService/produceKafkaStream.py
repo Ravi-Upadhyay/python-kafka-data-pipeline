@@ -1,3 +1,10 @@
+"""
+MODULE: produceKafkaStream:
+1. It read data from a file (Contains sample data for Meetup's RSVP) line by line To simulate data stream
+2. As Meetup's RSVP steaming API doesn't exist
+3. It then produce those events in Kafka event bus
+"""
+
 from time import sleep
 from kafka import KafkaProducer
 import json
@@ -8,11 +15,6 @@ SLEEP_TIME_BEFORE_READ_NEXT_LINE = 2
 
 KAFKA_HOST = "localhost:9092"
 KAFKA_TOPIC_INCOMING = "meetup-rsvp"
-
-# Note: Basic file open operation
-# f = open(FILE_LOCATION, mode="rt", encoding=DEFAULT_ENCODING)
-# line = f.readline()
-# print(line)
 
 # Create a Kafka producer instance
 producer = KafkaProducer(bootstrap_servers=[KAFKA_HOST], value_serializer=lambda m: json.dumps(m).encode(DEFAULT_ENCODING))
@@ -33,8 +35,8 @@ producer = KafkaProducer(bootstrap_servers=[KAFKA_HOST], value_serializer=lambda
 def sanitizeInputBeforeEventCreation(d):
     return d
 
-def produceKafkaEvent(l):
-    sanitizedInput = sanitizeInputBeforeEventCreation(l)
+def produceKafkaEvent(data):
+    sanitizedInput = sanitizeInputBeforeEventCreation(data)
     print('Reading from file: ', sanitizedInput)
     producer.send(KAFKA_TOPIC_INCOMING, {'rsvp': sanitizedInput})
 
