@@ -27,6 +27,9 @@ export class MeetupRsvpFe extends LitElement {
     this.socket.on('connect', () => {
       console.log('Connected to server', 'Socket id: ', this.socket.id);
     });
+    // this.socket.on('message', (message) => {
+    //   console.log('Received Message', message);
+    // });
   }
 
   __increment() {

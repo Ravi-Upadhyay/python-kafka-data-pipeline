@@ -49,6 +49,28 @@ $ pip3 install Flask
 ```python
 $ pip3 install flask_socketio
 ```
+> Web socket communication - Data transfer not working on Flask Server
+> [Gunicorn](https://flask.palletsprojects.com/en/2.2.x/deploying/gunicorn/)
+> gunicorn-20.1.0-py3-none-any.whl
+
+```python
+$ pip3 install gunicorn
+```
+> install eventlet
+> dnspython-2.3.0 eventlet-0.33.3 greenlet-2.0.2 six-1.16.0
+```python
+$ pip3 install eventlet
+```
+
+> Another server, eventlet started but throwing some error. Trying this one
+```python
+pip3 install gevent
+```
+
+> Command to run gunicorn server
+```python
+gunicorn --worker-class eventlet -w 4 -b 0.0.0.0:8000 --log-level=debug app:app
+```
 
 #### Installing Apache Kafka
 
@@ -114,4 +136,4 @@ ___
 
 ## Todo List
 
-- Make backend service a single page application. [Flask Single Page App](https://flask.palletsprojects.com/en/2.2.x/patterns/singlepageapplications/)
+[ ] Make backend service a single page application. [Flask Single Page App](https://flask.palletsprojects.com/en/2.2.x/patterns/singlepageapplications/)
