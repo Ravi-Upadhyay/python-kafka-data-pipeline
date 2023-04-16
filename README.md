@@ -45,10 +45,19 @@ $ pip3 install Flask
 ```
 
 - To install websocket flask
+
 > [Flask Socket io](https://flask-socketio.readthedocs.io/en/latest/)
 ```python
 $ pip3 install flask_socketio
 ```
+
+- Web Socket Documentation: 
+
+> [Socket IO](https://socket.io/docs/v4/)
+> [Github python-socketio](https://github.com/miguelgrinberg/python-socketio)
+> [Pypi - python-socketio](https://pypi.org/project/python-socketio/)
+> [Documentation python-socketio](https://python-socketio.readthedocs.io/en/latest/)
+
 > Web socket communication - Data transfer not working on Flask Server
 > [Gunicorn](https://flask.palletsprojects.com/en/2.2.x/deploying/gunicorn/)
 > gunicorn-20.1.0-py3-none-any.whl
