@@ -5,8 +5,7 @@ MODULE: consumeKafkaStream:
 """
 
 from time import sleep
-from kafka import KafkaConsumer
-from flask_expects_json import expects_json
+from kafka import KafkaConsumer, KafkaProducer
 import json
 
 DEFAULT_ENCODING = "utf-8"
@@ -15,9 +14,13 @@ SLEEP_TIME_BEFORE_READ_NEXT_LINE = 2
 
 KAFKA_HOST = "localhost:9092"
 KAFKA_TOPIC_INCOMING = "meetup-rsvp"
+KAFKA_TOPIC_OUTGOING = "meetup-rsvp-true"
 
 # Set up Kafka consumer
 consumer = KafkaConsumer(KAFKA_TOPIC_INCOMING, bootstrap_servers=[KAFKA_HOST], auto_offset_reset='earliest')
+
+# Create a Kafka producer instance
+producer = KafkaProducer(bootstrap_servers=[KAFKA_HOST], value_serializer=lambda m: json.dumps(m).encode(DEFAULT_ENCODING))
 
 def filterDataVenue(d):
     # print('from filterDataVenue: ', d)
@@ -51,16 +54,27 @@ def filterDataToProceed(d):
 
 
 
-def consumeKafkaEvents(defEncoding):
+def consumeKafkaEvents(defEncoding = DEFAULT_ENCODING):
+    # meetupRsvpTrue = []
     for message in consumer:
         try: 
             data = json.loads(message.value.decode(defEncoding))
             # print('Data from Kafka event bus: ', data)
             if data is not None:
-                print(filterDataToProceed(data))
+                filterdData = filterDataToProceed(data)
+                # print(filterdData)
+                if filterdData is not None and filterdData['response'] == True:
+                    # print(filterdData)
+                    # return filterdData
+                    # meetupRsvpTrue.append(filterdData)
+                    producer.send(KAFKA_TOPIC_OUTGOING, filterdData)
+
         except ValueError:
            pass
-           
+        #    return None
+    
+    # return meetupRsvpTrue
+    # print(meetupRsvpTrue)     
 
 if __name__ == '__main__':
-    consumeKafkaEvents(DEFAULT_ENCODING)
+    consumeKafkaEvents()

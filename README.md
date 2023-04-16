@@ -69,7 +69,13 @@ pip3 install gevent
 
 > Command to run gunicorn server
 ```python
-gunicorn --worker-class eventlet -w 4 -b 0.0.0.0:8000 --log-level=debug app:app
+gunicorn --worker-class eventlet -w 4 -b 127.0.0.1:5000 --log-level=debug app:app
+# or
+gunicorn --worker-class gevent -w 4 -b 127.0.0.1:5000 --log-level=debug app:app
+# or
+gunicorn -w 4 -b 127.0.0.1:5000 --log-level=debug app:app
+# or 
+gunicorn -w 4 -b 127.0.0.1:5000 app:app
 ```
 
 #### Installing Apache Kafka
@@ -94,6 +100,7 @@ $ bin/kafka-server-start.sh config/server.properties
 
 # Start kafka topic
 $ bin/kafka-topics.sh --create --topic meetup-rsvp --bootstrap-server localhost:9092
+$ bin/kafka-topics.sh --create --topic meetup-rsvp-true --bootstrap-server localhost:9092
 ```
 
 > Topic created - meetup-rsvp
@@ -101,6 +108,7 @@ $ bin/kafka-topics.sh --create --topic meetup-rsvp --bootstrap-server localhost:
 ```bash
 
 $ bin/kafka-topics.sh --describe --topic meetup-rsvp --bootstrap-server localhost:9092
+
 
 ```
 
