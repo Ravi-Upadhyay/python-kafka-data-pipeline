@@ -56,6 +56,11 @@ def _read_file_line_by_line_as_stream_(producer, file, def_encoding, sim_time):
         return count
 
 def kafka_produce_incoming_main():
+    """
+    FUNCITON: kafka_produce_incoming_main(), main callable function of the module
+    @returns: Number of records processed or Warning
+    @arguments: None
+    """
     producer = _get_kafka_producer_incoming_(KAFKA_HOST, DEFAULT_ENCODING)
     if producer != False:
         processed_records =_read_file_line_by_line_as_stream_(producer, FILE_LOCATION, DEFAULT_ENCODING, SLEEP_TIME_BEFORE_READ_NEXT_LINE)
