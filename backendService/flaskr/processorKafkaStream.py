@@ -9,7 +9,7 @@ from kafka import KafkaConsumer, KafkaProducer
 import json
 
 DEFAULT_ENCODING = "utf-8"
-FILE_LOCATION = "./streamMock/meetup.txt"
+FILE_LOCATION = "./../mocks/meetup.txt"
 SLEEP_TIME_BEFORE_READ_NEXT_LINE = 2
 
 KAFKA_HOST = "localhost:9092"
@@ -55,7 +55,6 @@ def filterDataToProceed(d):
 
 
 def consumeKafkaEvents(defEncoding = DEFAULT_ENCODING):
-    # meetupRsvpTrue = []
     for message in consumer:
         try: 
             data = json.loads(message.value.decode(defEncoding))
@@ -64,17 +63,11 @@ def consumeKafkaEvents(defEncoding = DEFAULT_ENCODING):
                 filterdData = filterDataToProceed(data)
                 # print(filterdData)
                 if filterdData is not None and filterdData['response'] == True:
-                    # print(filterdData)
-                    # return filterdData
-                    # meetupRsvpTrue.append(filterdData)
+                    print(filterdData)
                     producer.send(KAFKA_TOPIC_OUTGOING, filterdData)
 
         except ValueError:
-           pass
-        #    return None
-    
-    # return meetupRsvpTrue
-    # print(meetupRsvpTrue)     
+           pass   
 
 if __name__ == '__main__':
     consumeKafkaEvents()

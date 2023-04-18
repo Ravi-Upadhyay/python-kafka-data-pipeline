@@ -6,14 +6,12 @@ Communicates with the front end over web socket
 
 from flask import Flask, jsonify, redirect
 from kafka import KafkaConsumer
-from flask_socketio import SocketIO, emit, send
-import json
+from flask_socketio import SocketIO
 import eventlet
-import asyncio
-from asgiref.wsgi import WsgiToAsgi
+import json
 
 DEFAULT_ENCODING = "utf-8"
-FILE_LOCATION = "./streamMock/meetup.txt"
+FILE_LOCATION = "./../mocks/meetup.txt"
 SLEEP_TIME_BEFORE_READ_NEXT_LINE = 2
 
 KAFKA_HOST = "localhost:9092"
@@ -102,4 +100,5 @@ def handle_rsvp(offset):
     return responseData['end']
 
 if __name__ == '__main__':
-    socketio.run(app)
+    # socketio.run(app)
+    eventlet.wsgi.server(eventlet.listen(('localhost', 5000)), socketio.run(app))
