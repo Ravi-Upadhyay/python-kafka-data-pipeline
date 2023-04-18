@@ -32,6 +32,9 @@ ___
 ```python
 # /backgroundService/
 $ flask --app app run #to run app.py locally. 
+
+
+
 ```
 
 - To install the Flask (Virtual environment)
@@ -42,6 +45,9 @@ $ python3 -m venv venv
 $ . venv/bin/activate
 
 $ pip3 install Flask
+
+# Just note, still need to verify if really flask is needed with async option, Did during troubleshooting the web socket connection
+$ pip3 install Flask[async]
 ```
 
 - To install websocket flask
@@ -69,6 +75,16 @@ $ pip3 install gunicorn
 > dnspython-2.3.0 eventlet-0.33.3 greenlet-2.0.2 six-1.16.0
 ```python
 $ pip3 install eventlet
+```
+
+```python
+
+# Run Eventlet server using command prompt
+eventlet wsgi --host localhost --port 5000 --concurrency 4 your_app_module:app
+
+# Run eventlet server at app.py file
+import eventlet
+eventlet.wsgi.server(eventlet.listen(('localhost', 5000)), socketio.run(app))
 ```
 
 > Another server, eventlet started but throwing some error. Trying this one
