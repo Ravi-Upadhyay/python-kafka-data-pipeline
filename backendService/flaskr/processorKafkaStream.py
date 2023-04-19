@@ -7,14 +7,14 @@ MODULE: consumeKafkaStream:
 from time import sleep
 from kafka import KafkaConsumer, KafkaProducer
 import json
+from constants import DEFAULT_ENCODING, FILE_LOCATION, KAFKA_HOST, KAFKA_TOPIC_OUTGOING, KAFKA_TOPIC_INCOMING, SLEEP_TIME_BEFORE_READ_NEXT_LINE
+# DEFAULT_ENCODING = "utf-8"
+# FILE_LOCATION = "./../mocks/meetup.txt"
+# SLEEP_TIME_BEFORE_READ_NEXT_LINE = 2
 
-DEFAULT_ENCODING = "utf-8"
-FILE_LOCATION = "./../mocks/meetup.txt"
-SLEEP_TIME_BEFORE_READ_NEXT_LINE = 2
-
-KAFKA_HOST = "localhost:9092"
-KAFKA_TOPIC_INCOMING = "meetup-rsvp"
-KAFKA_TOPIC_OUTGOING = "meetup-rsvp-true"
+# KAFKA_HOST = "localhost:9092"
+# KAFKA_TOPIC_INCOMING = "meetup-rsvp"
+# KAFKA_TOPIC_OUTGOING = "meetup-rsvp-true"
 
 # Set up Kafka consumer
 consumer = KafkaConsumer(KAFKA_TOPIC_INCOMING, bootstrap_servers=[KAFKA_HOST], auto_offset_reset='earliest')

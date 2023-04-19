@@ -10,13 +10,15 @@ from flask_socketio import SocketIO
 import eventlet
 import json
 
-DEFAULT_ENCODING = "utf-8"
-FILE_LOCATION = "./../mocks/meetup.txt"
-SLEEP_TIME_BEFORE_READ_NEXT_LINE = 2
+from constants import DEFAULT_ENCODING, FILE_LOCATION, KAFKA_HOST, KAFKA_TOPIC_OUTGOING, KAFKA_TOPIC_INCOMING, SLEEP_TIME_BEFORE_READ_NEXT_LINE
 
-KAFKA_HOST = "localhost:9092"
-KAFKA_TOPIC_INCOMING = "meetup-rsvp"
-KAFKA_TOPIC_OUTGOING = "meetup-rsvp-true"
+#DEFAULT_ENCODING = "utf-8"
+#FILE_LOCATION = "./../mocks/meetup.txt"
+#SLEEP_TIME_BEFORE_READ_NEXT_LINE = 2
+
+# KAFKA_HOST = "localhost:9092"
+#KAFKA_TOPIC_INCOMING = "meetup-rsvp"
+#KAFKA_TOPIC_OUTGOING = "meetup-rsvp-true"
 
 app = Flask(__name__, static_folder='app', static_url_path="/app")
 
