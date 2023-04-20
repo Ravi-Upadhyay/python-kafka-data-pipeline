@@ -1,5 +1,5 @@
 """
-Module: constants.py
+MODULE: constants.py
 Declare constants for the project
 """
 
@@ -17,3 +17,5 @@ KAFKA_TOPIC_OUTGOING = "meetup-rsvp-true"
 KAFKA_CONSUMER_TIMEOUT = 2000
 KAFKA_CONSUMER_MAX_POLL_RECORDS = 10
 KAFKA_CONSUMER_GROUP_ID = 'common'
+KAFKA_DEFAULT_PARTITION = 0
+KAFKA_DEFAULT_OFFSET = 0
