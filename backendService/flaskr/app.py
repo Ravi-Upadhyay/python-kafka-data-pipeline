@@ -10,6 +10,8 @@ from flask_socketio import SocketIO
 import eventlet
 import json
 
+from data_pipeline_output import data_pipeline_output_main
+
 DEFAULT_ENCODING = "utf-8"
 FILE_LOCATION = "./../mocks/meetup.txt"
 SLEEP_TIME_BEFORE_READ_NEXT_LINE = 2
@@ -28,8 +30,9 @@ socketio = SocketIO(app, cors_allowed_origins='*', logger=True, engineio_logger=
 consumer = KafkaConsumer(KAFKA_TOPIC_OUTGOING, bootstrap_servers=[KAFKA_HOST], auto_offset_reset='earliest')
 
 def simulateRsvpMessage(offset):
+    print('simulateRsvpMessage', offset)
     start = int(offset)
-    end = start + 5
+    end = start + 10
     messageList = []
 
     for x in range(start, end):
@@ -39,21 +42,12 @@ def simulateRsvpMessage(offset):
     return { 'messageList': messageList, 'end': end }
 
 def getRsvpFromKafkaConsumer(offset):
-    counter = 0
     start = int(offset)
-    end = 0
+    end = start + 10
     messageList = []
     
-    for message in consumer: 
-        kafka_offset = int(message.offset)
-        if kafka_offset > start and counter <= 4:
-            counter += 1
-            data = json.loads(message.value.decode(DEFAULT_ENCODING))
-            finalMessage = { 'rsvp_id': str(data['rsvp_id']) }
-            # print('dataFrom getRsvpFromKafkaConsumer: ', finalMessage)
-            messageList.append(finalMessage)
-
-    return { 'messageList': messageList, 'end': end }
+    events = data_pipeline_output_main(start)
+    return { 'messageList': events, 'end': end }
 
 # ----------------------- HTTP Communication ---------------------------
 
@@ -91,8 +85,7 @@ def test_connect():
 
 @socketio.on('json')
 def handle_rsvp(offset):
-    responseData = simulateRsvpMessage(offset)
-    # responseData = getRsvpFromKafkaConsumer(offset)
+    responseData = getRsvpFromKafkaConsumer(offset)
 
     for message in responseData['messageList']: 
         socketio.emit('json', json.dumps(message))

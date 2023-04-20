@@ -4,7 +4,7 @@ Provide services and utilities for connecting with kafka
 """
 
 from time import sleep
-from kafka import KafkaProducer, KafkaConsumer
+from kafka import KafkaProducer, KafkaConsumer, TopicPartition
 import json
 
 # Importing Constants
@@ -64,3 +64,7 @@ def get_kafka_consumer(kafka_topic, kafka_host, aor = 'earliest'):
         print('Error: get_kafka_consumer()')
     finally: 
        return consumer if get_kafka_bootstrap_connected_status(consumer) else False
+    
+
+def get_kafka_consumer_topic_partition(kafka_topic, partition):
+    return  TopicPartition(kafka_topic, partition)

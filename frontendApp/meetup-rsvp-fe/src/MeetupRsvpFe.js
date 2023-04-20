@@ -33,7 +33,7 @@ export class MeetupRsvpFe extends LitElement {
     });
 
     this.socket.on('json', arg => {
-      const logMessage = `WS:(Server), RSVP Data: ${arg}`;
+      const logMessage = `WS:(Server), RSVP Data: ${JSON.parse(arg)}`;
       this.__outputLogger([logMessage]);
     });
 
