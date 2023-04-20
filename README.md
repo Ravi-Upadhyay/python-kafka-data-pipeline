@@ -48,6 +48,8 @@ $ pip3 install Flask
 
 # Just note, still need to verify if really flask is needed with async option, Did during troubleshooting the web socket connection
 $ pip3 install Flask[async]
+$ pip install pytest
+$ pip install pytest coverage
 ```
 
 - To install websocket flask

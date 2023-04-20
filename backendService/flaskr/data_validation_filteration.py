@@ -73,7 +73,6 @@ def filter_data_by_rsvp(d):
     @returns True/False, If the given record (dict)
     @arguments a record (dict) for the Rsvp event from outgoing pipline
     """
-    rsvp_status = _check_rsvp_status_(d)
-    if d is not None and rsvp_status:
-        return True
+    if d is not None and 'response' in d:
+        return _check_rsvp_status_(d)
     return False

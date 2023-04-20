@@ -16,7 +16,7 @@ from data_pipeline_output import data_pipeline_output_main
 from data_pipeline_input import data_pipeline_input_main
 from data_pipeline_processor import data_pipeline_processor_main
 
-def create_app():
+def get_the_app():
     """
     FUNCTION: Create a Web Socket Enabled Flask App
     @returns Socketio, App
@@ -121,10 +121,10 @@ def create_app():
             return response_data['end']
         return {"app": app, "socketio": socketio}
     except: 
-        print('Error: create_app(), could not create app')
+        print('Error: get_the_app(), could not create app')
 
 def iniate_server():
-    resources = create_app()
+    resources = get_the_app()
     eventlet.wsgi.server(eventlet.listen(('localhost', 5000)), resources['socketio'].run(resources['app']))
 
 if __name__ == '__main__':
