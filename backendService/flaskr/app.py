@@ -5,102 +5,141 @@ Communicates with the front end over web socket
 """
 
 from flask import Flask, jsonify, redirect
-from kafka import KafkaConsumer
+
 from flask_socketio import SocketIO
+
 import eventlet
-import json
 
-from constants import DEFAULT_ENCODING, FILE_LOCATION, KAFKA_HOST, KAFKA_TOPIC_OUTGOING, KAFKA_TOPIC_INCOMING, SLEEP_TIME_BEFORE_READ_NEXT_LINE
+from constants import KAFKA_CONSUMER_MAX_POLL_RECORDS, DEFAULT_ENCODING
 
-#DEFAULT_ENCODING = "utf-8"
-#FILE_LOCATION = "./../mocks/meetup.txt"
-#SLEEP_TIME_BEFORE_READ_NEXT_LINE = 2
+from data_pipeline_output import data_pipeline_output_main
+from data_pipeline_input import data_pipeline_input_main
+from data_pipeline_processor import data_pipeline_processor_main
 
-# KAFKA_HOST = "localhost:9092"
-#KAFKA_TOPIC_INCOMING = "meetup-rsvp"
-#KAFKA_TOPIC_OUTGOING = "meetup-rsvp-true"
+def get_the_app():
+    """
+    FUNCTION: Create a Web Socket Enabled Flask App
+    @returns Socketio, App
+    """
+    try: 
+        app = Flask(__name__, static_folder='app', static_url_path="/app")
 
-app = Flask(__name__, static_folder='app', static_url_path="/app")
+        # Initialize Socket - Kept commented debug mode initialization
+        # socketio = SocketIO(app, cors_allowed_origins='*')
+        socketio = SocketIO(app, cors_allowed_origins='*', logger=True, engineio_logger=True)
 
-# Initialize Socket - Kept commented debug mode initialization
-# socketio = SocketIO(app, cors_allowed_origins='*')
-socketio = SocketIO(app, cors_allowed_origins='*', logger=True, engineio_logger=True)
+        def start_data_pipeline_input_as_service():
+            """
+            FUNCITON: start_data_pipeline_input_as_service(), Initiate data pipeline for input
+            @returns: None
+            @arguments: None
+            TODO: Can be created as separated micro service / separate thread
+            """
+            data_pipeline_input_main()
 
-# Set up Kafka consumer
-consumer = KafkaConsumer(KAFKA_TOPIC_OUTGOING, bootstrap_servers=[KAFKA_HOST], auto_offset_reset='earliest')
+        def start_data_pipeline_processor_as_service():
+            """
+            FUNCITON: start_data_pipeline_processor_as_service(), Initiate data pipeline for processing
+            @returns: None
+            @arguments: None
+            TODO: Can be created as separated micro service / separate thread
+            """
+            data_pipeline_processor_main()
 
-def simulateRsvpMessage(offset):
-    start = int(offset)
-    end = start + 5
-    messageList = []
+        def get_rsvp_from_kafka_consumer(offset):
+            """
+            FUNCITON: get_rsvp_from_kafka_consumer(), get rsvp data from kafka output pipeline
+            @returns: List of events and end offset
+            @arguments: start offset
+            """
+            start = int(offset)
+            end = start + KAFKA_CONSUMER_MAX_POLL_RECORDS
+            message_list = []
+            events = data_pipeline_output_main(start)
+            if events is not None:
+                message_list = events
+            return { 'message_list': message_list, 'end': end }
 
-    for x in range(start, end):
-        message = { 'offsetCount': x }
-        messageList.append(message)
-    
-    return { 'messageList': messageList, 'end': end }
+        @app.route("/keepalive")
+        def keepalive():
+            """
+            HTTP: (FUNCTION)  /keepalive
+            @returns: JSON health status
+            @arguments: None
+            """
+            return jsonify({"status": "connected"})
 
-def getRsvpFromKafkaConsumer(offset):
-    counter = 0
-    start = int(offset)
-    end = 0
-    messageList = []
-    
-    for message in consumer: 
-        kafka_offset = int(message.offset)
-        if kafka_offset > start and counter <= 4:
-            counter += 1
-            data = json.loads(message.value.decode(DEFAULT_ENCODING))
-            finalMessage = { 'rsvp_id': str(data['rsvp_id']) }
-            # print('dataFrom getRsvpFromKafkaConsumer: ', finalMessage)
-            messageList.append(finalMessage)
+        @app.route('/', defaults={'path': ''})
+        @app.route('/<path:path>')
+        def catch_all(path):
+            """
+            HTTP: (FUNCTION) For all routes, redirect to /keepalive
+            Get RSVP Events Ouput Pipeline - i.e. With Rsvp True
+            @returns: Redirect to /keepalive
+            @arguments: None
+            """
+            return redirect('/keepalive', code=200)
 
-    return { 'messageList': messageList, 'end': end }
+        @socketio.on('connect')
+        def handle_connect():
+            """
+            Web Socket: (FUNCTION) Generic Handler for connect
+            @emits: Connection Establis log message
+            @returns: None
+            @arguments: None
+            """
+            log_message = 'WS:(Server) Connection Established'
+            print(log_message)
+            socketio.emit('connect', log_message)
 
-# ----------------------- HTTP Communication ---------------------------
+        @socketio.on('disconnect')
+        def handle_disconnect():
+            """
+            Web Socket: (FUNCTION) Generic Handler for Disconnect
+            @emits: Connection Lost log message
+            @returns: None
+            @arguments: None
+            """
+            log_message = 'WS:(Server) Connection Lost'
+            print(log_message)
 
-# Keepalive endpoint for monitorint the health
-@app.route("/keepalive")
-def keepalive():
-    return jsonify({"status": "connected"})
+        @socketio.on('test')
+        def test_connect():
+            """
+            Web Socket: (FUNCTION) For Test Web Socket
+            Get RSVP Events Ouput Pipeline - i.e. With Rsvp True
+            @emits: Test Message from server for web socket connection
+            @returns: None
+            @arguments: None
+            """
+            log_message = 'WS:(Server) Test Connection'
+            print(log_message)
+            socketio.emit('test', log_message)
 
-# To make it simple and single page application from the backend all other URLs will be redirected
-# To the keep alive
-@app.route('/', defaults={'path': ''})
-@app.route('/<path:path>')
-def catch_all(path):
-    return redirect('/keepalive', code=200)
+        @socketio.on('json')
+        def handle_rsvp(offset):
+            """
+            Web Socket: (FUNCTION) For RSVP events
+            Get RSVP Events Ouput Pipeline - i.e. With Rsvp True
+            @emits: Rsvp Events
+            @returns: End Offset
+            @arguments: Start Offset
+            """
+            response_data = get_rsvp_from_kafka_consumer(offset)
 
-# ----------------------- Web Socket Communication ----------------------
+            for message in response_data['message_list']: 
+                socketio.emit('json', message.value.decode(DEFAULT_ENCODING))
 
-# Web socket endpoint to receive Kafka data and publish it to front-end application
-@socketio.on('connect')
-def handle_connect():
-    logMessage = 'WS:(Server) Connection Established'
-    print(logMessage)
-    socketio.emit('connect', logMessage)
+            return response_data['end']
+        start_data_pipeline_input_as_service()
+        start_data_pipeline_processor_as_service()
+        return {"app": app, "socketio": socketio}
+    except: 
+        print('Error: get_the_app(), could not create app')
 
-@socketio.on('disconnect')
-def handle_disconnect():
-    logMessage = 'WS:(Server) Connection Lost'
-    print(logMessage)
-
-@socketio.on('test')
-def test_connect():
-    logMessage = 'WS:(Server) Test Connection'
-    print(logMessage)
-    socketio.emit('test', logMessage)
-
-@socketio.on('json')
-def handle_rsvp(offset):
-    responseData = simulateRsvpMessage(offset)
-    # responseData = getRsvpFromKafkaConsumer(offset)
-
-    for message in responseData['messageList']: 
-        socketio.emit('json', json.dumps(message))
-
-    return responseData['end']
+def iniate_server():
+    resources = get_the_app()
+    eventlet.wsgi.server(eventlet.listen(('localhost', 5000)), resources['socketio'].run(resources['app']))
 
 if __name__ == '__main__':
-    # socketio.run(app)
-    eventlet.wsgi.server(eventlet.listen(('localhost', 5000)), socketio.run(app))
+    iniate_server()

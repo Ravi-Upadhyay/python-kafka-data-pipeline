@@ -1,0 +1,16 @@
+MANIFEST.in
+setup.py
+flaskr/__init__.py
+flaskr/app.py
+flaskr/constants.py
+flaskr/data_pipeline_input.py
+flaskr/data_pipeline_output.py
+flaskr/data_pipeline_processor.py
+flaskr/data_validation_filteration.py
+flaskr/kafka_connector_service.py
+flaskr/processorKafkaStream.py
+flaskr.egg-info/PKG-INFO
+flaskr.egg-info/SOURCES.txt
+flaskr.egg-info/dependency_links.txt
+flaskr.egg-info/requires.txt
+flaskr.egg-info/top_level.txt
