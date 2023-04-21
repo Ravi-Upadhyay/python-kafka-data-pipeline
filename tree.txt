@@ -1,0 +1,35 @@
+.
+|____frontendApp
+| |____meetup-rsvp-fe
+| | |____test
+| | |____node_modules
+| | |____index.js
+| | |____custom-elements.json
+| | |____README.md
+| | |____stories
+| | |____package-lock.json
+| | |____package.json
+| | |____web-dev-server.config.mjs
+| | |____src
+| | | |____MeetupRsvpFe.js
+| | | |____services
+
+
+|____backendService
+| |____mocks
+| |____tests
+| |____manifest.in
+| |____flaskr
+| | |____constants.py
+| | |____data_pipeline_input.py
+| | |____kafka_connector_service.py
+| | |____data_validation_filteration.py
+| | |____static
+| | |____app.py
+| | |____templates
+| | |____data_pipeline_output.py
+| | |____processorKafkaStream.py
+| | |____data_pipeline_processor.py
+| |____setup.py
+| |____instance
+|____tree.txt
