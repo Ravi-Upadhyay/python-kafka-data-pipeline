@@ -29,10 +29,22 @@ def get_the_app():
         socketio = SocketIO(app, cors_allowed_origins='*', logger=True, engineio_logger=True)
 
         def start_data_pipeline_input_as_service():
-            print('TODO: start_data_pipeline_input_as_service, Start service')
+            """
+            FUNCITON: start_data_pipeline_input_as_service(), Initiate data pipeline for input
+            @returns: None
+            @arguments: None
+            TODO: Can be created as separated micro service / separate thread
+            """
+            data_pipeline_input_main()
 
         def start_data_pipeline_processor_as_service():
-            print('TODO: start_data_pipeline_processor_as_service, Start service')
+            """
+            FUNCITON: start_data_pipeline_processor_as_service(), Initiate data pipeline for processing
+            @returns: None
+            @arguments: None
+            TODO: Can be created as separated micro service / separate thread
+            """
+            data_pipeline_processor_main()
 
         def get_rsvp_from_kafka_consumer(offset):
             """
@@ -119,6 +131,8 @@ def get_the_app():
                 socketio.emit('json', message.value.decode(DEFAULT_ENCODING))
 
             return response_data['end']
+        start_data_pipeline_input_as_service()
+        start_data_pipeline_processor_as_service()
         return {"app": app, "socketio": socketio}
     except: 
         print('Error: get_the_app(), could not create app')
