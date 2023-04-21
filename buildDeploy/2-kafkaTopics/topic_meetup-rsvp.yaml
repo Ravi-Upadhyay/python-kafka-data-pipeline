@@ -1,0 +1,16 @@
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaTopic
+metadata:
+  name: meetup-rsvp
+  namespace: my-cluster-operator-namespace
+  labels:
+    strimzi.io/cluster: my-cluster
+spec:
+  config:
+    min.insync.replicas: "1"
+    cleanup.policy: compact
+    compression.type: producer
+    segment.bytes: "104857600"
+  topicName: meetup-rsvp
+  partitions: 1
+  replicas: 1
