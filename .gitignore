@@ -1,2 +1,5 @@
 /backendService/venv/*
 /frontendApp/node_modules/*
+*.pyc
+/backendService/flaskr/__pycache__/*
+.vscode/*
