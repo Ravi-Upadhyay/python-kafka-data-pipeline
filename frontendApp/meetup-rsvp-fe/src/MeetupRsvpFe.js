@@ -111,18 +111,3 @@ export class MeetupRsvpFe extends LitElement {
     return html` ${this.__getHtmlTemplate()} `;
   }
 }
-
-// Complete Socket Implementation
-
-// const socket = io('http://localhost:5000');
-// socket.on('connect', () => {
-//   console.log('Connected to server');
-// });
-// socket.on('message', (message) => {
-//   console.log('Received message: ' + message);
-// });
-
-// function sendMessage() {
-//   const input = document.getElementById('input').value;
-//   socket.send(input);
-// }
