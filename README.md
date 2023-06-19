@@ -112,6 +112,7 @@ ____backendService
 ## To do list<a name="todo"></a>
 
 1. System is designed a way that it can be converted in micro-services design pattern but, at the moment it is one single application. 
-2. Automation testing 
-3. Threading can be improved by event handling. Not invested at the moment.
-4. Complete CI/CD pipeline with cloud like environment.
+2. For processing data libraries like Apache Flink can be used.
+3. Automation testing, Started but not completed.
+4. Threading can be improved by event handling. Not invested at the moment.
+5. Complete CI/CD pipeline with cloud like environment.
